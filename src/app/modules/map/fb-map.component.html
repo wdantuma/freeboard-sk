@@ -573,6 +573,12 @@
   }
 
   <!-- Vessel (self) -->
+  <fb-radar
+  [position]="dfeat.self.position"
+  [heading]="dfeat.self.orientation"
+  [zIndex]="260"
+  >
+  </fb-radar>  
   <fb-vessel
     [position]="dfeat.self.position"
     [heading]="dfeat.self.orientation"
@@ -595,11 +601,11 @@
   >
   </fb-vessel-trail>
   }
-
   <!-- chart boundaries-->
   @if(app.data.chartBounds) {
   <fb-chart-bounds [zIndex]="250" [charts]="dfeat.charts"> </fb-chart-bounds>
   }
+
 </ol-map>
 
 <!-- context menu -->
