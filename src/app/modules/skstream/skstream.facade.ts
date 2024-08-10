@@ -227,7 +227,7 @@ export class SKStreamFacade {
         path: [{ path: 'notifications.*', period: 1000 }]
       }
     });
-    this.stream.postMessage({
+    this.worker.postMessage({
       cmd: 'subscribe',
       options: {
         context: 'feature.*',

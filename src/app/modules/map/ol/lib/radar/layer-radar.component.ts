@@ -22,7 +22,8 @@ import { MapComponent } from '../map.component';
 @Component({
     selector: 'ol-map > fb-radar',
     template: '<ng-content></ng-content>',
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone:false
 })
 export class RadarComponent implements OnInit, OnChanges, OnDestroy {
 

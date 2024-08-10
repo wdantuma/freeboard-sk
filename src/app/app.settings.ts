@@ -1,7 +1,7 @@
 import { Position } from './types';
 import { cleanConfig as cleanRadarConfig, IRadarConfig, DefaultRadarConfig as RadarDefaultConfig } from './modules/radar/settings';
-import _ from 'lodash'
 import { Convert } from './lib/convert';
+import _ from 'lodash'
 
 // validate supplied settings against base config
 export function validateConfig(settings: IAppConfig): boolean {
