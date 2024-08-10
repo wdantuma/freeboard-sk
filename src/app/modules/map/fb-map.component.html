@@ -572,7 +572,17 @@
   </fb-arrival-circle>
   }
 
-  <!-- Vessel (self) -->
+  <!-- Radar -->
+  @if(app.data.radar.hasApi && app.config.radar.showLayer) {
+  <fb-radar
+    [position]="dfeat.self.position"
+    [heading]="dfeat.self.orientation"
+    [zIndex]="211"
+  >
+  </fb-radar>  
+  }
+
+  <!-- Vessel (self) -->  
   <fb-vessel
     [position]="dfeat.self.position"
     [heading]="dfeat.self.orientation"
@@ -595,11 +605,11 @@
   >
   </fb-vessel-trail>
   }
-
   <!-- chart boundaries-->
   @if(app.data.chartBounds) {
   <fb-chart-bounds [zIndex]="250" [charts]="dfeat.charts"> </fb-chart-bounds>
   }
+
 </ol-map>
 
 <!-- context menu -->

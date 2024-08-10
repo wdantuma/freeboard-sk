@@ -224,6 +224,13 @@ export class SKStreamFacade {
         path: [{ path: 'notifications.*', period: 1000 }]
       }
     });
+    this.stream.postMessage({
+      cmd: 'subscribe',
+      options: {
+        context: 'feature.*',
+        path: [{ path: '*', period: 6000 }]
+      }
+    });
   }
 
   // ** process selfTrail message from worker and emit trail$ **

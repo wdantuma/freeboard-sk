@@ -39,6 +39,7 @@
   "license": "Apache-v2",
   "dependencies": {
     "@signalk/server-api": "^2.3.0",
+    "google-protobuf": "^3.21.4",
     "socket.io-client": "^4.6.0",
     "tslib": "^2.0.0"
   },
@@ -67,6 +68,7 @@
     "@types/xml2js": "^0.4.14",
     "@typescript-eslint/eslint-plugin": "^5.10.0",
     "@typescript-eslint/parser": "^5.10.0",
+    "@types/google-protobuf": "^3.15.12",
     "codelyzer": "^6.0.0",
     "eslint": "^8.33.0",
     "geolib": "^3.3.3",
@@ -86,7 +88,7 @@
     "prettier-plugin-organize-attributes": "^0.0.5",
     "proj4": "2.6.2",
     "protractor": "~7.0.0",
-    "rxjs": "~6.6.3",
+    "rxjs": "~7.8.0",
     "semver": "^7.6.0",
     "signalk-client-angular": "^2.0.3",
     "signalk-worker-angular": "^1.1.4",

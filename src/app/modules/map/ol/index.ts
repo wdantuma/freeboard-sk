@@ -53,6 +53,7 @@ import { AISWindLayerComponent } from './lib/resources/layer-aiswind.component';
 import { AISTargetsLayerComponent } from './lib/resources/layer-aistargets.component';
 import { AISVesselsLayerComponent } from './lib/resources/layer-aisvessels.component';
 import { AISTargetsTrackLayerComponent } from './lib/resources/layer-aistargets-track.component';
+import { RadarComponent } from './lib/radar/layer-radar.component'
 
 export * from './lib/util';
 export { MapService } from './lib/map.service';
@@ -102,6 +103,7 @@ export { TargetAngleComponent } from './lib/navigation/layer-target-angle.compon
 import { TargetAngleComponent } from './lib/navigation/layer-target-angle.component';
 export { DirectionOfTravelComponent } from './lib/navigation/layer-dot.component';
 export { VesselComponent } from './lib/vessel/layer-vessel.component';
+export { RadarComponent } from './lib/radar/layer-radar.component'
 export { VesselTrailComponent } from './lib/vessel/layer-vessel-trail.component';
 export { FBFeatureLayerComponent } from './lib/sk-feature.component';
 export { RacingStartLineLayerComponent } from './lib/racing/layer-racing-startline.component';
@@ -143,6 +145,7 @@ const declarations = [
   LaylineComponent,
   TargetAngleComponent,
   VesselComponent,
+  RadarComponent,
   VesselTrailComponent,
   DirectionOfTravelComponent,
   FBFeatureLayerComponent,

@@ -260,6 +260,9 @@ export class AppInfo extends Info {
         position: [0, 0],
         hasApi: true
       },
+      radar:{
+        hasApi:false
+      },
       autopilot: {
         console: false, // display Autopilot console
         hasApi: false // Server implements Autopilot API

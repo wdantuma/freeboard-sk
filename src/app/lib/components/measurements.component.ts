@@ -160,7 +160,7 @@ export class Measurements {
   }
 
   close() {
-    this.cancel.next();
+    this.cancel.next(false);
   }
 
   private calc() {

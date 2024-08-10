@@ -587,6 +587,11 @@ export class AppComponent {
             this.app.debug('*** found PMTiles plugin');
             hasPlugin.pmTiles = true;
           }
+          // Rdar support
+          if (p.id === 'radar-sk') {
+            this.app.debug('*** found radar-sk plugin');
+            this.app.data.radar.hasApi = true;
+          }          
         });
         // finalise
         if (hasPlugin.pmTiles && !hasPlugin.charts) {
@@ -1156,6 +1161,11 @@ export class AppComponent {
     if (this.app.config.aisTargets) {
       this.processAIS(true);
     }
+    this.app.saveConfig();
+  }
+
+  public toggleRadar() {
+    this.app.config.radar.showLayer = !this.app.config.radar.showLayer;
     this.app.saveConfig();
   }
 
