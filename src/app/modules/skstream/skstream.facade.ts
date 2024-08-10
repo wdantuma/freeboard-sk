@@ -227,7 +227,7 @@ export class SKStreamFacade {
     this.stream.postMessage({
       cmd: 'subscribe',
       options: {
-        context: 'plugins.*',
+        context: 'feature.*',
         path: [{ path: '*', period: 6000 }]
       }
     });
