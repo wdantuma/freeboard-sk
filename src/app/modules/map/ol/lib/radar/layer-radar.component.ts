@@ -17,6 +17,7 @@ import { RadarService } from './radar.service'
 import { ShipState } from './ship-state.model'
 import { MapComponent } from '../map.component';
 
+
 // ** Freeboard Radar component **
 @Component({
     selector: 'ol-map > fb-radar',
@@ -51,9 +52,8 @@ export class RadarComponent implements OnInit, OnChanges, OnDestroy {
             this.layerReady.next(this.layer);
             this.layerReady.complete();
         }
-        //TODO get fram signalk radar plugin API
 
-        this.radarService.Connect("http://localhost:3001/v1/api/radars").then(() => {
+        this.radarService.Connect().then(() => {
             let radars = this.radarService.GetRadars()
             let radar = radars.get(radars.keys().next().value);
             if (radar) {

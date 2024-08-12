@@ -572,13 +572,17 @@
   </fb-arrival-circle>
   }
 
-  <!-- Vessel (self) -->
+  <!-- Radar -->
+  @if(app.data.radar.hasApi) {
   <fb-radar
-  [position]="dfeat.self.position"
-  [heading]="dfeat.self.orientation"
-  [zIndex]="260"
+    [position]="dfeat.self.position"
+    [heading]="dfeat.self.orientation"
+    [zIndex]="260"
   >
   </fb-radar>  
+  }
+
+  <!-- Vessel (self) -->  
   <fb-vessel
     [position]="dfeat.self.position"
     [heading]="dfeat.self.orientation"

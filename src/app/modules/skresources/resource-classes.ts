@@ -113,6 +113,15 @@ export class SKRegion {
   }
 }
 
+// ** Signal K Radar
+export class SKRadar {
+  id: string;
+  name: string;
+  spokes:number;
+  maxSpokeLen :number;
+  streamUrl:string;
+}
+
 // ** Signal K chart
 export class SKChart {
   identifier: string;

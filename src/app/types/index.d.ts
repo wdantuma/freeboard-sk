@@ -15,7 +15,8 @@ import {
   SKAtoN,
   SKAircraft,
   SKVessel,
-  SKTrack
+  SKTrack,
+  SKRadar
 } from '../modules/skresources/resource-classes';
 
 export * from './resources/signalk';
@@ -161,6 +162,9 @@ export interface FBAppData {
     position: Position;
     hasApi: boolean;
   };
+  radar: {
+    hasApi:boolean;
+  },
   autopilot: {
     console: boolean; // display Autopilot console
     hasApi: boolean; // Server implements Autopilot API

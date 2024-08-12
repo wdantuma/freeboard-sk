@@ -1,6 +1,6 @@
 /// <reference lib="webworker" />
 
-import { Radar } from './radar.model'
+import { SKRadar } from '../../../../skresources/resource-classes';
 import { RadarMessage } from './RadarMessage'
 import { Color } from 'ol/color'
 
@@ -88,7 +88,7 @@ addEventListener('message', (event) => {
   if (event.data.canvas) {
     computeColourMap(0)
     const radarCanvas = event.data.canvas
-    const radar = event.data.radar as Radar
+    const radar = event.data.radar as SKRadar
     const ctxWorker = radarCanvas.getContext("2d");// as CanvasRenderingContext2D;
     const pixel = ctxWorker.createImageData(1, 1)
     const pixelData = pixel.data

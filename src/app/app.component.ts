@@ -587,6 +587,11 @@ export class AppComponent {
             this.app.debug('*** found PMTiles plugin');
             hasPlugin.pmTiles = true;
           }
+          // Rdar support
+          if (p.id === 'radar-sk') {
+            this.app.debug('*** found radar-sk plugin');
+            this.app.data.radar.hasApi = true;
+          }          
         });
         // finalise
         if (hasPlugin.pmTiles && !hasPlugin.charts) {

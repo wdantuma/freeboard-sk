@@ -6,32 +6,31 @@ import Projection from 'ol/proj/Projection'
 import Circle from 'ol/geom/Circle'
 import { createLoader } from 'ol/source/static'
 import { Coordinate } from 'ol/coordinate';
-import { Radar } from './radar.model';
+import { SKRadar } from '../../../../skresources/resource-classes';
 import { ShipState } from './ship-state.model'
 import { firstValueFrom, Observable,map } from 'rxjs'
 import {createEmpty} from 'ol/extent'
+import { SignalKClient } from 'signalk-client-angular';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RadarService {
 
-  constructor(private http: HttpClient) {  }
+  constructor(private signalk: SignalKClient) {  }
 
-  private radarServerUrl?: string;
-  private radars: Map<string,Radar> = new Map<string,Radar>();
+  private radars: Map<string,SKRadar> = new Map<string,SKRadar>();
 
 
-  public async Connect(radarServerUrl: string) {
-    this.radarServerUrl = radarServerUrl;
-    this.radars = await firstValueFrom(this.http.get(this.radarServerUrl).pipe(map((re) => new Map<string,Radar>(Object.entries(re)))));
+  public async Connect() {
+    this.radars = await firstValueFrom(this.signalk.get("/plugins/radar-sk/v1/api/radars").pipe(map((re) => new Map<string,SKRadar>(Object.entries(re)))));
   }
 
-  public GetRadars(): Map<string,Radar> {
+  public GetRadars(): Map<string,SKRadar> {
     return this.radars;
   }
 
-  public CreateRadarSource(radar: Radar, shipState: Observable<ShipState>): ImageSource {
+  public CreateRadarSource(radar: SKRadar, shipState: Observable<ShipState>): ImageSource {
 
     let range = 0
     let location: Coordinate = [0, 0]
