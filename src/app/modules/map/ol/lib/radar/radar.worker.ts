@@ -49,9 +49,10 @@ const BLOB_COLOURS = (BlobColour.BLOB_DOPPLER_APPROACHING + 1)
 const BLOB_HISTORY_MAX = (BlobColour.BLOB_HISTORY_31)
 let m_colour_map = new Map<number, BlobColour>()
 let m_colour_map_rgb = new Map<BlobColour, Color>()
-const thresholdRed = 255
-const thresholdGreen = 255
-const thresholdBlue = 255
+const thresholdRed = 200
+const thresholdGreen = 100
+const thresholdBlue = 32
+
 let Heading = 0
 
 function computeColourMap(doppler_states: number) {
@@ -124,6 +125,7 @@ addEventListener('message', (event) => {
       socket.onmessage = (event) => {
         let message = RadarMessage.deserialize(event.data)
         if (lastRange != message.spoke.range) {
+          ctxWorker.clearRect(0, 0, radarCanvas.width, radarCanvas.height);
           lastRange = message.spoke.range
           postMessage({ range: message.spoke.range })
         }
