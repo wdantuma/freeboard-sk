@@ -88,10 +88,13 @@ addEventListener('message', (event) => {
   }
   if (event.data.canvas) {
     computeColourMap(0)
-    const radarCanvas = event.data.canvas
+    const radarOnScreenCanvas = event.data.canvas
+    const radarOnScreenContext = radarOnScreenCanvas.getContext("2d")
+    const radarCanvas = new OffscreenCanvas(radarOnScreenCanvas.width,radarOnScreenCanvas.height)
     const radar = event.data.radar as SKRadar
-    const ctxWorker = radarCanvas.getContext("2d");// as CanvasRenderingContext2D;
-    const pixel = ctxWorker.createImageData(1, 1)
+    const radarContext = radarCanvas.getContext("2d");// as CanvasRenderingContext2D;
+
+    const pixel = radarContext.createImageData(1, 1)
     const pixelData = pixel.data
     pixelData[0] = 0
     pixelData[1] = 0
@@ -124,12 +127,11 @@ addEventListener('message', (event) => {
 
       socket.onmessage = (event) => {
         let message = RadarMessage.deserialize(event.data)
-
         for (let si = 0; si < message.spokes.length; si++) {
           let spoke = message.spokes[si]
 
           if (lastRange != spoke.range) {
-            ctxWorker.clearRect(0, 0, radarCanvas.width, radarCanvas.height);
+            radarContext.clearRect(0, 0, radarCanvas.width, radarCanvas.height);
             lastRange = spoke.range
             postMessage({ range: spoke.range })
           }
@@ -143,22 +145,22 @@ addEventListener('message', (event) => {
           angle = angle % radar.spokes
 
           // 2D context based draw implementation maybe to webgl context
-          if (Date.now() - spoke.time < 8000) { // drop old spokes
+          if (Date.now() - spoke.time < 500) { // drop old spokes
             // clear spoke in front
             let clearangle1 = angle + 1 % radar.spokes
             let clearangle2 = angle + 4 % radar.spokes
-            ctxWorker.moveTo
-            ctxWorker.save()
-            ctxWorker.beginPath()
-            ctxWorker.strokeStyle = "#00000000"
-            ctxWorker.moveTo(x[clearangle1 * radar.maxSpokeLen + 0], y[clearangle1 * radar.maxSpokeLen + 0])
-            ctxWorker.lineTo(x[clearangle1 * radar.maxSpokeLen + radar.maxSpokeLen - 1], y[clearangle1 * radar.maxSpokeLen + radar.maxSpokeLen - 1])
-            ctxWorker.lineTo(x[clearangle2 * radar.maxSpokeLen + radar.maxSpokeLen - 1], y[clearangle2 * radar.maxSpokeLen + radar.maxSpokeLen - 1])
-            ctxWorker.closePath()
-            ctxWorker.stroke()
-            ctxWorker.clip()
-            ctxWorker.clearRect(0, 0, radarCanvas.width, radarCanvas.height);
-            ctxWorker.restore()
+            radarContext.moveTo
+            radarContext.save()
+            radarContext.beginPath()
+            radarContext.strokeStyle = "#00000000"
+            radarContext.moveTo(x[clearangle1 * radar.maxSpokeLen + 0], y[clearangle1 * radar.maxSpokeLen + 0])
+            radarContext.lineTo(x[clearangle1 * radar.maxSpokeLen + radar.maxSpokeLen - 1], y[clearangle1 * radar.maxSpokeLen + radar.maxSpokeLen - 1])
+            radarContext.lineTo(x[clearangle2 * radar.maxSpokeLen + radar.maxSpokeLen - 1], y[clearangle2 * radar.maxSpokeLen + radar.maxSpokeLen - 1])
+            radarContext.closePath()
+            radarContext.stroke()
+            radarContext.clip()
+            radarContext.clearRect(0, 0, radarCanvas.width, radarCanvas.height);
+            radarContext.restore()
 
             // draw current spoke
             for (let i = 0; i < spoke.data.length; i++) {
@@ -172,12 +174,14 @@ addEventListener('message', (event) => {
                   pixelData[1] = color[1]
                   pixelData[2] = color[2]
                   pixelData[3] = color[3] * 255
-                  ctxWorker.putImageData(pixel, x1, y1)
+                  radarContext.putImageData(pixel, x1, y1)
                 }
               }
             }
           }
         }
+        radarOnScreenContext.clearRect(0, 0, radarCanvas.width, radarCanvas.height);
+        radarOnScreenContext.drawImage(radarCanvas,0,0)
       }
 
       socket.onopen = (event) => {
@@ -186,14 +190,14 @@ addEventListener('message', (event) => {
 
       socket.onclose = (event) => {
         console.log(`Radar ${radar.name} disconnected retry in 3 seconds`);
-        ctxWorker.clearRect(0, 0, radarCanvas.width, radarCanvas.height);
+        radarContext.clearRect(0, 0, radarCanvas.width, radarCanvas.height);
         setTimeout(function () {
           connect();
         }, 3000);
       }
 
       socket.onerror = (event) => {
-        ctxWorker.clearRect(0, 0, radarCanvas.width, radarCanvas.height);
+        radarContext.clearRect(0, 0, radarCanvas.width, radarCanvas.height);
         postMessage({ redraw: true })
         console.error(`Error on radar ${radar.name} stopping`)
       }
