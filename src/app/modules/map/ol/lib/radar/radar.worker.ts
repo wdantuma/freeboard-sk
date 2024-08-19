@@ -137,7 +137,7 @@ addEventListener('message', (event) => {
           }
 
           let angle = spoke.angle
-          let h = 295.9 - 90
+          let h = Heading - 90
           if (h < 0) {
             h += 360
           }
@@ -145,7 +145,7 @@ addEventListener('message', (event) => {
           angle = angle % radar.spokes
 
           // 2D context based draw implementation maybe to webgl context
-          if (Date.now() - spoke.time < 500) { // drop old spokes
+          if (Date.now() - spoke.time < 800) { // drop old spokes
             // clear spoke in front
             let clearangle1 = angle + 1 % radar.spokes
             let clearangle2 = angle + 4 % radar.spokes
@@ -182,6 +182,7 @@ addEventListener('message', (event) => {
         }
         radarOnScreenContext.clearRect(0, 0, radarCanvas.width, radarCanvas.height);
         radarOnScreenContext.drawImage(radarCanvas,0,0)
+        postMessage({ redraw: true })
       }
 
       socket.onopen = (event) => {
