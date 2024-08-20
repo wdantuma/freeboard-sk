@@ -1164,6 +1164,11 @@ export class AppComponent {
     this.app.saveConfig();
   }
 
+  public toggleRadar() {
+    this.app.config.radar = !this.app.config.radar;
+    this.app.saveConfig();
+  }
+
   public toggleCourseData() {
     this.app.config.courseData = !this.app.config.courseData;
     this.app.saveConfig();

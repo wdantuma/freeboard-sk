@@ -573,7 +573,7 @@
   }
 
   <!-- Radar -->
-  @if(app.data.radar.hasApi) {
+  @if(app.data.radar.hasApi && app.config.radar) {
   <fb-radar
     [position]="dfeat.self.position"
     [heading]="dfeat.self.orientation"

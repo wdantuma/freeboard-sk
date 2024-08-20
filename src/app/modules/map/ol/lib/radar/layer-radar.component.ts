@@ -33,6 +33,8 @@ export class RadarComponent implements OnInit, OnChanges, OnDestroy {
     @Input() position: Coordinate;
     @Input() heading = 0;
     @Input() zIndex: number;
+    @Input() visible: boolean;
+    @Input() layerProperties: { [index: string]: any };
 
     state: ShipState = { location: [0, 0], heading: 0 }
 
@@ -42,9 +44,7 @@ export class RadarComponent implements OnInit, OnChanges, OnDestroy {
 
     ngOnInit(): void {
 
-        this.layer = new ImageLayer({
-            zIndex:this.zIndex
-        })
+        this.layer = new ImageLayer( Object.assign(this, { ...this.layerProperties }))
         const map = this.mapComponent.getMap();
         if (this.layer && map) {
             map.addLayer(this.layer);

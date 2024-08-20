@@ -103,6 +103,14 @@
         }}</mat-icon>
         <span>{{ app.config.aisTargets ? 'Hide' : 'Show' }} Vessels</span>
       </a>
+      @if(app.data.radar.hasApi) {
+      <a mat-menu-item (click)="toggleRadar()">
+        <mat-icon>{{
+          app.config.radar ? 'visibility_off' : 'radar'
+        }}</mat-icon>
+        <span>{{ app.config.radar ? 'Hide' : 'Show' }} Radar</span>
+      </a>
+      }
       <a mat-menu-item (click)="toggleNotes()">
         <mat-icon>{{
           app.config.notes ? 'visibility_off' : 'local_offer'
