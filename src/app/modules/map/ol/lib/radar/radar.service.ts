@@ -20,10 +20,18 @@ export class RadarService {
   constructor(private signalk: SignalKClient) {  }
 
   private radars: Map<string,SKRadar> = new Map<string,SKRadar>();
+  private workers: Worker[] = []
 
 
   public async Connect() {
     this.radars = await firstValueFrom(this.signalk.get("/plugins/radar-sk/v1/api/radars").pipe(map((re) => new Map<string,SKRadar>(Object.entries(re)))));
+  }
+
+  public async Disconnect() {
+    this.workers.forEach((w) => {
+      w.terminate();
+    })
+    this.workers=[]
   }
 
   public GetRadars(): Map<string,SKRadar> {
@@ -70,6 +78,7 @@ export class RadarService {
     })
 
     const worker = new Worker(new URL('./radar.worker', import.meta.url));
+    this.workers.push(worker)
     worker.postMessage({ canvas: offscreenRdarcanvas, radar: radar }, [offscreenRdarcanvas]);
     worker.onmessage = (event) => {
       if (event.data.redraw) {

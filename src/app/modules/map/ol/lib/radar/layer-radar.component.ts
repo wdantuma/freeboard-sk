@@ -84,5 +84,6 @@ export class RadarComponent implements OnInit, OnChanges, OnDestroy {
             map.render();
             this.layer = null;
         }
+        this.radarService.Disconnect();
     }
 }
