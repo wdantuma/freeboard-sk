@@ -46,7 +46,7 @@ addEventListener('message', (event) => {
       }
     }
 
-    function ToNorthAngle(angle:number) :number {
+    function ToBearing(angle:number) :number {
       let h = Heading - 90
       if (h < 0) {
         h += 360
@@ -66,14 +66,16 @@ addEventListener('message', (event) => {
       socket.onmessage = (event) => {
         let message = RadarMessage.deserialize(event.data)
         if (message.spokes.length > 0) {
-          let shift = Date.now() - message.spokes[0].time
-          if (shift > 800) {
-            // drop old packets
-            return
+          if (message.spokes[0].has_time) {
+            let shift = Date.now() - message.spokes[0].time
+            if (shift > 800) {
+              // drop old packets
+              return
+            }  
           }
         }
-        let clearangle1 = ToNorthAngle(message.spokes[0].angle % radar.spokes)
-        let clearangle2 = ToNorthAngle(message.spokes[message.spokes.length-1].angle % radar.spokes)
+        let clearangle1 = ToBearing(message.spokes[0].angle % radar.spokes)
+        let clearangle2 = ToBearing(message.spokes[message.spokes.length-1].angle % radar.spokes)
         radarContext.save()
         radarContext.beginPath()
         radarContext.strokeStyle = "#00000000"
@@ -96,7 +98,10 @@ addEventListener('message', (event) => {
             postMessage({ range: spoke.range })
           }
 
-          let angle = ToNorthAngle(spoke.angle)
+          let spokeBearing = ToBearing(spoke.angle)
+          if (spoke.has_bearing) {
+            spokeBearing=spoke.bearing
+          }
 
           // 2D context based draw implementation maybe to webgl context
 
@@ -104,8 +109,8 @@ addEventListener('message', (event) => {
 
 
           for (let i = 0; i < spoke.data.length; i++) {
-            let x1 = x[angle * radar.maxSpokeLen + i]
-            let y1 = y[angle * radar.maxSpokeLen + i]
+            let x1 = x[spokeBearing * radar.maxSpokeLen + i]
+            let y1 = y[spokeBearing * radar.maxSpokeLen + i]
             let index = (y1 * spokeImageData.width) + x1
             index = index * 4
             let color = colors.get(spoke.data[i])
