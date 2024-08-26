@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import ImageSource from 'ol/source/Image'
-import { fromLonLat } from 'ol/proj'
 import Projection from 'ol/proj/Projection'
-import Circle from 'ol/geom/Circle'
+import {circular} from 'ol/geom/Polygon'
 import { createLoader } from 'ol/source/static'
 import { Coordinate } from 'ol/coordinate';
 import { SKRadar } from '../../../../skresources/resource-classes';
@@ -45,8 +44,8 @@ export class RadarService {
     let rangeExtent = createEmpty();
 
     function UpdateExtent(location: Coordinate, range: number) {
-      let center = fromLonLat(location)
-      let extent = new Circle(center, range).getExtent()
+      
+      let extent = circular(location,25465).transform("EPSG:4326","EPSG:3857").getExtent()
       rangeExtent[0] = extent[0]
       rangeExtent[1] = extent[1]
       rangeExtent[2] = extent[2]
