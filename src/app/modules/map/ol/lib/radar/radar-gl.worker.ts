@@ -29,12 +29,12 @@ addEventListener('message', (event) => {
 
     // vertex shader source code
     var vertCode = 'attribute vec3 coordinates;' +
-      'attribute vec3 color;' +
-      'varying vec3 vColor;' +
+      'attribute vec4 color;' +
+      'varying vec4 vColor;' +
       'void main(void) {' +
       ' gl_Position = vec4(coordinates, 1.0);' +
       'vColor = color;' +
-      'gl_PointSize = 10.0;' +
+      'gl_PointSize = 1.0;' +
       '}';
 
     // Create a vertex shader object
@@ -50,9 +50,9 @@ addEventListener('message', (event) => {
 
     // fragment shader source code
     var fragCode = 'precision mediump float;' +
-      'varying vec3 vColor;' +
+      'varying vec4 vColor;' +
       'void main(void) {' +
-      'gl_FragColor = vec4(vColor, 1.);' +
+      'gl_FragColor = vColor;' +
       '}';
 
     // Create fragment shader object
@@ -105,12 +105,14 @@ addEventListener('message', (event) => {
     var colorAttr = radarContext.getAttribLocation(shaderProgram, "color");
 
     // point attribute to the color buffer object
-    radarContext.vertexAttribPointer(colorAttr, 3, radarContext.FLOAT, false, 0, 0);
+    radarContext.vertexAttribPointer(colorAttr, 4, radarContext.FLOAT, false, 0, 0);
 
     // enable the color attribute
     radarContext.enableVertexAttribArray(colorAttr);
 
-    radarContext.enable(radarContext.DEPTH_TEST);
+    radarContext.clearColor(0.0, 0.0, 0.0, 0.0);
+
+    radarContext.clear(radarContext.COLOR_BUFFER_BIT);
 
 
     //build positions
@@ -163,21 +165,7 @@ addEventListener('message', (event) => {
             }
           }
         }
-
-        // let clearangle1 = ToBearing(message.spokes[0].angle % radar.spokes)
-        // let clearangle2 = ToBearing(message.spokes[message.spokes.length-1].angle % radar.spokes)
-        // radarContext.save()
-        // radarContext.beginPath()
-        // radarContext.strokeStyle = "#00000000"
-        // radarContext.moveTo(x[0], y[0])
-        // radarContext.lineTo(x[clearangle1 * radar.maxSpokeLen + radar.maxSpokeLen - 1], y[clearangle1 * radar.maxSpokeLen + radar.maxSpokeLen - 1])
-        // radarContext.lineTo(x[clearangle2 * radar.maxSpokeLen + radar.maxSpokeLen - 1], y[clearangle2 * radar.maxSpokeLen + radar.maxSpokeLen - 1])
-        // radarContext.closePath()
-        // radarContext.stroke()
-        // radarContext.clip()
-        // radarContext.clearRect(0, 0, radarCanvas.width, radarCanvas.height);
-        // radarContext.restore()
-
+        
         const vertices = []
         const verticeColors = []
 
@@ -185,7 +173,7 @@ addEventListener('message', (event) => {
           let spoke = message.spokes[si]
 
           if (lastRange != spoke.range) {
-            radarContext.clearColor(1.0, 1.0, 1.0, 0.0);
+            radarContext.clear(radarContext.COLOR_BUFFER_BIT);
             lastRange = spoke.range
             postMessage({ range: spoke.range })
           }
@@ -206,12 +194,12 @@ addEventListener('message', (event) => {
               verticeColors.push(color[0]/255)
               verticeColors.push(color[1]/255)
               verticeColors.push(color[2]/255)
-              //verticeColors.push(color[3])
+              verticeColors.push(color[3])
             } else {
               verticeColors.push(1.0)
               verticeColors.push(1.0)
               verticeColors.push(1.0)
-              //verticeColors.push(0)
+              verticeColors.push(0)
             }
           }
 
@@ -236,7 +224,7 @@ addEventListener('message', (event) => {
 
       socket.onclose = (event) => {
         console.log(`Radar ${radar.name} disconnected retry in 3 seconds`);
-        //radarContext.clearColor(1.0, 1.0, 1.0, 0.0);
+        radarContext.clear(radarContext.COLOR_BUFFER_BIT);
         radarOnScreenContext.clearRect(0, 0, radarCanvas.width, radarCanvas.height);
 
         setTimeout(function () {
@@ -245,7 +233,7 @@ addEventListener('message', (event) => {
       }
 
       socket.onerror = (event) => {
-        //radarContext.clearColor(1.0, 1.0, 1.0, 0.0);
+        radarContext.clear(radarContext.COLOR_BUFFER_BIT);
         radarOnScreenContext.clearRect(0, 0, radarCanvas.width, radarCanvas.height);
         postMessage({ redraw: true })
         console.error(`Error on radar ${radar.name} stopping`)
