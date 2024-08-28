@@ -2,13 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import ImageSource from 'ol/source/Image'
 import Projection from 'ol/proj/Projection'
-import {circular} from 'ol/geom/Polygon'
+import { circular } from 'ol/geom/Polygon'
 import { createLoader } from 'ol/source/static'
 import { Coordinate } from 'ol/coordinate';
 import { SKRadar } from '../../../../skresources/resource-classes';
 import { ShipState } from './ship-state.model'
-import { firstValueFrom, Observable,map } from 'rxjs'
-import {createEmpty} from 'ol/extent'
+import { firstValueFrom, Observable, map } from 'rxjs'
+import { createEmpty } from 'ol/extent'
 import { SignalKClient } from 'signalk-client-angular';
 
 @Injectable({
@@ -16,24 +16,32 @@ import { SignalKClient } from 'signalk-client-angular';
 })
 export class RadarService {
 
-  constructor(private signalk: SignalKClient) {  }
+  hasWebgl: boolean = false
 
-  private radars: Map<string,SKRadar> = new Map<string,SKRadar>();
+  constructor(private signalk: SignalKClient) {
+    const gl = document.createElement('canvas').getContext('webgl2');
+    if (gl) {
+      this.hasWebgl = true
+      console.info("Radar using WebGL renderer")
+    }
+  }
+
+  private radars: Map<string, SKRadar> = new Map<string, SKRadar>();
   private workers: Worker[] = []
 
 
   public async Connect() {
-    this.radars = await firstValueFrom(this.signalk.get("/plugins/radar-sk/v1/api/radars").pipe(map((re) => new Map<string,SKRadar>(Object.entries(re)))));
+    this.radars = await firstValueFrom(this.signalk.get("/plugins/radar-sk/v1/api/radars").pipe(map((re) => new Map<string, SKRadar>(Object.entries(re)))));
   }
 
   public async Disconnect() {
     this.workers.forEach((w) => {
       w.terminate();
     })
-    this.workers=[]
+    this.workers = []
   }
 
-  public GetRadars(): Map<string,SKRadar> {
+  public GetRadars(): Map<string, SKRadar> {
     return this.radars;
   }
 
@@ -44,8 +52,8 @@ export class RadarService {
     let rangeExtent = createEmpty();
 
     function UpdateExtent(location: Coordinate, range: number) {
-      
-      let extent = circular(location,25465).transform("EPSG:4326","EPSG:3857").getExtent()
+
+      let extent = circular(location, 25465).transform("EPSG:4326", "EPSG:3857").getExtent()
       rangeExtent[0] = extent[0]
       rangeExtent[1] = extent[1]
       rangeExtent[2] = extent[2]
@@ -76,7 +84,13 @@ export class RadarService {
       })
     })
 
-    const worker = new Worker(new URL('./radar.worker', import.meta.url));
+    var worker: Worker
+    if (this.hasWebgl) {
+      worker = new Worker(new URL('./radar-gl.worker', import.meta.url));
+    } else {
+      worker = new Worker(new URL('./radar.worker', import.meta.url));
+    }
+
     this.workers.push(worker)
     worker.postMessage({ canvas: offscreenRdarcanvas, radar: radar }, [offscreenRdarcanvas]);
     worker.onmessage = (event) => {
