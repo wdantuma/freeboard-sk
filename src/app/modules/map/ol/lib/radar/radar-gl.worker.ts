@@ -34,7 +34,7 @@ addEventListener('message', (event) => {
       'void main(void) {' +
       ' gl_Position = vec4(coordinates, 1.0);' +
       'vColor = color;' +
-      'gl_PointSize = 1.0;' +
+      // 'gl_PointSize = 1.0;' +
       '}';
 
     // Create a vertex shader object
@@ -123,7 +123,7 @@ addEventListener('message', (event) => {
     const cx = 0
     const cy = 0
     const maxRadius = 1
-    const angleShift = 0.0// ((2 * Math.PI) / radar.spokes)/2
+    const angleShift = ((2 * Math.PI) / radar.spokes)/2
     const radiusShift = 0.0// (1 / radar.maxSpokeLen)/2
 
     for (let a = 0; a < radar.spokes; a++) {
@@ -165,7 +165,7 @@ addEventListener('message', (event) => {
             }
           }
         }
-        
+
         const vertices = []
         const verticeColors = []
 
@@ -182,12 +182,19 @@ addEventListener('message', (event) => {
           if (spoke.has_bearing) {
             spokeBearing = spoke.bearing
           }
+          let ba=spokeBearing+1
+          if (ba>(radar.spokes)-1) {
+            ba=0
+          }
 
           // draw current spoke
 
           for (let i = 0; i < spoke.data.length; i++) {
             vertices.push(x[spokeBearing * radar.maxSpokeLen + i])
-            vertices.push(y[spokeBearing * radar.maxSpokeLen + i])
+            vertices.push(y[spokeBearing * radar.maxSpokeLen + i])            
+            vertices.push(0.0)
+            vertices.push(x[ba * radar.maxSpokeLen + i])
+            vertices.push(y[ba * radar.maxSpokeLen + i])            
             vertices.push(0.0)
             let color = colors.get(spoke.data[i])
             if (color) {
@@ -195,7 +202,15 @@ addEventListener('message', (event) => {
               verticeColors.push(color[1]/255)
               verticeColors.push(color[2]/255)
               verticeColors.push(color[3])
+              verticeColors.push(color[0]/255)
+              verticeColors.push(color[1]/255)
+              verticeColors.push(color[2]/255)
+              verticeColors.push(color[3])
             } else {
+              verticeColors.push(1.0)
+              verticeColors.push(1.0)
+              verticeColors.push(1.0)
+              verticeColors.push(0)
               verticeColors.push(1.0)
               verticeColors.push(1.0)
               verticeColors.push(1.0)
@@ -211,7 +226,7 @@ addEventListener('message', (event) => {
         radarContext.bindBuffer(radarContext.ARRAY_BUFFER, colorBuffer);
         radarContext.bufferData(radarContext.ARRAY_BUFFER, new Float32Array(verticeColors), radarContext.STATIC_DRAW);
         radarContext.bindBuffer(radarContext.ARRAY_BUFFER, null);
-        radarContext.drawArrays(radarContext.POINTS, 0, vertices.length / 3);
+        radarContext.drawArrays(radarContext.LINES, 0, vertices.length / 3);
 
         radarOnScreenContext.clearRect(0, 0, radarCanvas.width, radarCanvas.height);
         radarOnScreenContext.drawImage(radarCanvas, 0, 0)
