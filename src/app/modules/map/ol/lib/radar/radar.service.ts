@@ -20,7 +20,7 @@ export class RadarService {
 
   constructor(private signalk: SignalKClient) {
     const gl = document.createElement('canvas').getContext('webgl2');
-    if (gl) {
+    if (gl !== null) {
       this.hasWebgl = true
       console.info("Radar using WebGL renderer")
     }

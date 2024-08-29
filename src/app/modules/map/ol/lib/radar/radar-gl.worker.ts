@@ -13,16 +13,31 @@ addEventListener('message', (event) => {
   }
   if (event.data.canvas) {
     const radarOnScreenCanvas = event.data.canvas
-    const radarOnScreenContext = radarOnScreenCanvas.getContext("2d")
-    const radarCanvas = new OffscreenCanvas(radarOnScreenCanvas.width, radarOnScreenCanvas.height)
+    const radarCanvas =  radarOnScreenCanvas //new OffscreenCanvas(radarOnScreenCanvas.width, radarOnScreenCanvas.height)
+    if (radarCanvas == null) {
+      console.error("Error creating offscreencanvas radar")
+      return
+    }
     const radar = event.data.radar as SKRadar
     colors.clear();
     Object.keys(radar.legend).forEach((n) => {
       colors.set(parseInt(n), fromString(radar.legend[n].color))
     })
-    const radarContext = radarCanvas.getContext("webgl2");
+    const radarContext = radarOnScreenCanvas.getContext("webgl2",{ preserveDrawingBuffer: true });
+    if (radarContext == null) {
+      console.error("Error creating Webgl2 context for radar")
+      return
+    }
     const vertexBuffer = radarContext.createBuffer();
+    if (vertexBuffer == null) {
+      console.error("Error creating vertexbuffer")
+      return
+    }
     const colorBuffer = radarContext.createBuffer();
+    if (colorBuffer == null) {
+      console.error("Error creating colorBuffer")
+      return
+    }
     radarContext.viewport(0, 0, radarCanvas.width, radarCanvas.height);
 
     /*=========================Shaders========================*/
@@ -228,8 +243,8 @@ addEventListener('message', (event) => {
         radarContext.bindBuffer(radarContext.ARRAY_BUFFER, null);
         radarContext.drawArrays(radarContext.LINES, 0, vertices.length / 3);
 
-        radarOnScreenContext.clearRect(0, 0, radarCanvas.width, radarCanvas.height);
-        radarOnScreenContext.drawImage(radarCanvas, 0, 0)
+        //radarOnScreenContext.clearRect(0, 0, radarCanvas.width, radarCanvas.height);
+        //radarOnScreenContext.drawImage(radarCanvas, 0, 0)
         postMessage({ redraw: true })
       }
 
@@ -240,7 +255,7 @@ addEventListener('message', (event) => {
       socket.onclose = (event) => {
         console.log(`Radar ${radar.name} disconnected retry in 3 seconds`);
         radarContext.clear(radarContext.COLOR_BUFFER_BIT);
-        radarOnScreenContext.clearRect(0, 0, radarCanvas.width, radarCanvas.height);
+        //radarOnScreenContext.clearRect(0, 0, radarCanvas.width, radarCanvas.height);
 
         setTimeout(function () {
           connect();
@@ -249,7 +264,7 @@ addEventListener('message', (event) => {
 
       socket.onerror = (event) => {
         radarContext.clear(radarContext.COLOR_BUFFER_BIT);
-        radarOnScreenContext.clearRect(0, 0, radarCanvas.width, radarCanvas.height);
+        //radarOnScreenContext.clearRect(0, 0, radarCanvas.width, radarCanvas.height);
         postMessage({ redraw: true })
         console.error(`Error on radar ${radar.name} stopping`)
       }
