@@ -1211,7 +1211,7 @@
     </ng-template>
   </mat-tab>
   
-  @if(facade.settings.radar) {
+  @if(facade.data.radar.hasApi) {
   <mat-tab label="Radar">
     <ng-template matTabContent>
       <div mat-dialog-content style="display: flex">

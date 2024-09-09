@@ -1,5 +1,6 @@
 import { Position } from './types';
-import { cleanConfig as cleanRadarConfig, IRadarConfig } from './modules/radar/settings';
+import { cleanConfig as cleanRadarConfig, IRadarConfig, DefaultRadarConfig as RadarDefaultConfig } from './modules/radar/settings';
+import _ from 'lodash'
 
 // validate supplied settings against base config
 export function validateConfig(settings: IAppConfig): boolean {
@@ -288,7 +289,6 @@ export const DefaultConfig: IAppConfig = {
   fixedLocationMode: false,
   fixedPosition: [0, 0],
   aisTargets: true, // display ais targets
-  radar: false, // display radar
   courseData: true, // show/hide course data
   toolBarButtons: true, // show/hide toolbar buttons
   notes: true, // display notes
@@ -394,7 +394,7 @@ export const DefaultConfig: IAppConfig = {
     },
     paths: []
   },
-  radar: {}
+  radar: _.cloneDeep(RadarDefaultConfig)
 };
 
 export interface IAppConfig {
@@ -417,7 +417,6 @@ export interface IAppConfig {
   fixedLocationMode: boolean;
   fixedPosition: Position;
   aisTargets: boolean; // display ais targets
-  radar: boolean; // display radar
   courseData: boolean; // show/hide course data
   toolBarButtons: boolean; // show/hide toolbar buttons
   notes: boolean; // display notes

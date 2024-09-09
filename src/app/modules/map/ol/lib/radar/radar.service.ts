@@ -5,7 +5,7 @@ import Projection from 'ol/proj/Projection'
 import { circular } from 'ol/geom/Polygon'
 import { createLoader } from 'ol/source/static'
 import { Coordinate } from 'ol/coordinate';
-import { SKRadar } from '../../../../skresources/resource-classes';
+import { SKRadar } from  '../../../../radar/skresources';
 import { ShipState } from './ship-state.model'
 import { firstValueFrom, Observable, map } from 'rxjs'
 import { createEmpty } from 'ol/extent'

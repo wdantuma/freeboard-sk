@@ -1,6 +1,6 @@
 /// <reference lib="webworker" />
 
-import { SKRadar } from '../../../../skresources/resource-classes';
+import { SKRadar } from  '../../../../radar/skresources';
 import { RadarMessage } from './RadarMessage'
 import {fromString } from 'ol/color'
 

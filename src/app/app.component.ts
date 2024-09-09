@@ -1165,7 +1165,7 @@ export class AppComponent {
   }
 
   public toggleRadar() {
-    this.app.config.radar = !this.app.config.radar;
+    this.app.config.radar.showLayer = !this.app.config.radar.showLayer;
     this.app.saveConfig();
   }
 

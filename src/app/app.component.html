@@ -108,7 +108,7 @@
         <mat-icon>{{
           app.config.radar ? 'visibility_off' : 'radar'
         }}</mat-icon>
-        <span>{{ app.config.radar ? 'Hide' : 'Show' }} Radar</span>
+        <span>{{ app.config.radar.showLayer ? 'Hide' : 'Show' }} Radar</span>
       </a>
       }
       <a mat-menu-item (click)="toggleNotes()">
