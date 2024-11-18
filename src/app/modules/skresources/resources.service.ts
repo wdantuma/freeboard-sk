@@ -214,7 +214,7 @@ export class SKResources {
    * @param collection The resource collection to which the resource belongs e.g. routes, waypoints, etc.
    * @param id Resource identifier
    */
-  public deleteResource(collection: string, id: string) {
+  public deleteResource(collection: string, id: string, refresh?: boolean) {
     this.signalk.api
       .delete(this.app.skApiVersion, `/resources/${collection}/${id}`)
       .subscribe(
@@ -225,6 +225,9 @@ export class SKResources {
           ) {
             const idx = this.app.config.selections[collection].indexOf(id);
             this.app.config.selections[collection].splice(idx, 1);
+          }
+          if (refresh && collection === 'charts') {
+            this.getCharts();
           }
         },
         (err: HttpErrorResponse) => {
@@ -815,6 +818,22 @@ export class SKResources {
     }
   }
 
+  // ** Confirm Chart Deletion **
+  showChartDelete(e: { id: string }) {
+    this.app
+      .showConfirm(
+        'Do you want to delete this Chart source?\n',
+        'Delete Chart:',
+        'YES',
+        'NO'
+      )
+      .subscribe((result: { ok: boolean }) => {
+        if (result && result.ok) {
+          this.deleteResource('charts', e.id, true);
+        }
+      });
+  }
+
   OSMCharts = [].concat(OSM);
   // ** get charts from sk server
   getCharts(apiVersion = this.app.config.chartApi ?? 1) {
@@ -1218,6 +1237,13 @@ export class SKResources {
         w.description = w.feature.properties.cmt;
       }
     }
+    if (w.feature.properties.skType) {
+      w.type = w.feature.properties.skType;
+      delete w.feature.properties.skType;
+    }
+    if (w.type) {
+      w.type = w.type.toLowerCase();
+    }
     return w;
   }
 
@@ -1268,7 +1294,7 @@ export class SKResources {
     if (!t) {
       return;
     }
-    const wpt = t[0][1];
+    const wpt = t[1];
     wpt['feature']['geometry']['coordinates'] =
       GeoUtils.normaliseCoords(position);
     wpt['position'] = {
@@ -1326,21 +1352,14 @@ export class SKResources {
           comment: wpt.description ?? '',
           position: wpt.feature.geometry['coordinates'],
           addMode: addMode,
-          skType:
-            typeof wpt.feature.properties['skType'] !== 'undefined'
-              ? wpt.feature.properties['skType']
-              : null
+          skType: wpt.type ?? ''
         }
       })
       .afterClosed()
       .subscribe((r) => {
         wpt.description = r.data.comment || '';
         wpt.name = r.data.name || '';
-        if (r.data.skType) {
-          wpt.feature.properties['skType'] = r.data.skType;
-        } else {
-          delete wpt.feature.properties['skType'];
-        }
+        wpt.type = r.data.skType;
         if (r.result) {
           // ** save / update waypoint **
           let isNew = false;

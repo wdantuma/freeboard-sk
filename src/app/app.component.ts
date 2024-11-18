@@ -208,6 +208,14 @@ export class AppComponent {
     // ********************* SUBSCRIPTIONS *****************
     // ** SIGNAL K STREAM **
     this.obsList.push(
+      this.app.skLogin$.subscribe({
+        next: (token: string) => {
+          this.app.debug('SK Login Event', token);
+          this.handleSKLoginEvent();
+        }
+      })
+    );
+    this.obsList.push(
       this.stream
         .delta$()
         .subscribe((msg: NotificationMessage | UpdateMessage) =>
@@ -447,9 +455,26 @@ export class AppComponent {
     }
   }
 
-  // ** display selected experiment UI **
-  public openExperiment(e) {
+  // display selected experiment UI
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public openExperiment(e: { choice: string; value?: any }) {
     switch (e.choice) {
+      case 'debugCapture':
+        if (window.isSecureContext) {
+          navigator.clipboard.writeText(
+            JSON.stringify({
+              data: this.app.data,
+              config: this.app.config
+            })
+          );
+          this.app.showMessage('Debug data catpured to clipboard.');
+        } else {
+          this.app.showAlert(
+            'Feature Unavailable',
+            'This feature is only available in a secure context!\n e.g. https, http://localhost, http://127.0.0.1'
+          );
+        }
+        break;
       case 'tracks': // tracks
         this.bottomSheet
           .open(TracksModal, {
@@ -491,6 +516,25 @@ export class AppComponent {
   }
 
   // ************************************************
+  handleSKLoginEvent() {
+    this.signalk.getLoginStatus().subscribe((r) => {
+      this.app.data.loginRequired = r.authenticationRequired ?? false;
+      this.app.data.loggedIn = r.status === 'loggedIn' ? true : false;
+      // ** Request using cached auth token and display badge
+      this.signalk.get('/plugins/freeboard-sk').subscribe(
+        () => {
+          this.app.debug('User Authenticated');
+          this.app.data.loggedIn = true;
+        },
+        (err: HttpErrorResponse) => {
+          if (err.status === 401) {
+            this.app.debug('User NOT Authenticated');
+            this.app.data.loggedIn = false;
+          }
+        }
+      );
+    });
+  }
 
   // ** establish connection to server
   private connectSignalKServer() {
@@ -501,24 +545,9 @@ export class AppComponent {
       .connect(this.app.hostName, this.app.hostPort, this.app.hostSSL)
       .subscribe(
         () => {
-          this.signalk.authToken = this.app.getToken();
-
-          this.signalk.getLoginStatus().subscribe((r) => {
-            this.app.data.loginRequired = r.authenticationRequired ?? false;
-            this.app.data.loggedIn = r.status === 'loggedIn' ? true : false;
-            // ** Request using cached auth token and display badge
-            this.signalk.get('/plugins/freeboard-sk').subscribe(
-              () => {
-                this.app.debug('User Authenticated');
-                this.app.data.loggedIn = true;
-              },
-              (err: HttpErrorResponse) => {
-                if (err.status === 401) {
-                  this.app.data.loggedIn = false;
-                }
-              }
-            );
-          });
+          this.signalk.authToken = this.app.getFBToken();
+          this.app.watchSKLogin();
+          this.handleSKLoginEvent();
 
           this.app.loadSettingsfromServer().subscribe((r) => {
             const msg = r

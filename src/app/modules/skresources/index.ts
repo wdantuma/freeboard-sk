@@ -18,6 +18,9 @@ export * from './components/ais/aircraft-properties-modal';
 
 export * from './components/charts/chartlist';
 export * from './components/charts/chart-properties-dialog';
+export * from './components/charts/wmts-dialog';
+export * from './components/charts/wms-dialog';
+export * from './components/charts/jsonmapsource-dialog';
 
 export * from './components/tracks/track-list-modal';
 

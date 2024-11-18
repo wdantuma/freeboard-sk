@@ -1,5 +1,39 @@
 # CHANGELOG: Freeboard
 
+
+### v2.12.2
+- **Fixed**: Issue applying URL query parameters. (#201)
+- **Fixed**: S57 symbol display issue. (#202)
+- **Added**: Watch for SK login info token changes.
+
+
+### v2.12.1
+- **Added**: WMS sources to the type of chart sources that can be defined.
+- **Fixed**: Date / time formating in weather forecast. (#193)
+- **Fixed**: Fix issue where anchor watch controls are not visible on small screens. (#198)
+- **Fixed**: Vessel Call sign not displayed correctly in AIS Properties screen. (#199)
+
+
+### v2.12.0
+
+- **Added**: Define chart sources from within the Charts List including: WMTS, Mapbox Style and TileJSON.
+- **Updated**: Measure distances < 1km are displayed in meters and < 0.5NM uses depth units (#194). 
+- **Updated**: Ensure weather forecast times use 24 hr format. (#193)
+- **Updated**: OpenSea Map min / max zoom levels.
+- **Updated**: OpenLayers v10. 
+- **Fixed**: gybeAngle null value handling.
+
+### v2.11.5
+
+- **Fixed**: Issue when moving waypoint.
+- **Fixed**: Downwind mark laylines. 
+- **Fixed**: Chart type metadata value processing. 
+
+### v2.11.4
+
+- **Updated**: Style waypoints using defined list of "type" attribute values.
+- **Added**: Debug data capture option to experiments. 
+
 ### v2.11.3
 
 - **Fixed**: VMG not being displayed in course data when destination is active. 

@@ -51,8 +51,8 @@ export const OSM = [
       name: 'Sea Map',
       description: 'Open Sea Map',
       url: 'https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png',
-      minzoom: 12,
-      maxzoom: 18,
+      minzoom: 1,
+      maxzoom: 24,
       bounds: [-180, -90, 180, 90],
       type: 'tilelayer'
     }),
@@ -103,6 +103,10 @@ export class AppInfo extends Info {
       : false;
   }
 
+  private skLoginSource: Subject<string>;
+  public skLogin$: Observable<string>;
+  private watchingSKLogin: number;
+
   constructor(
     public signalk: SignalKClient,
     private stream: SKStreamProvider,
@@ -112,6 +116,9 @@ export class AppInfo extends Info {
     super();
 
     this.db = new AppDB();
+
+    this.skLoginSource = new Subject<string>();
+    this.skLogin$ = this.skLoginSource.asObservable();
 
     // process searchParams
     if (window.location.search) {
@@ -160,7 +167,7 @@ export class AppInfo extends Info {
     this.name = 'Freeboard-SK';
     this.shortName = 'Freeboard';
     this.description = `Signal K Chart Plotter.`;
-    this.version = '2.11.3';
+    this.version = '2.12.2';
     this.url = 'https://github.com/signalk/freeboard-sk';
     this.logo = './assets/img/app_logo.png';
 
@@ -404,17 +411,43 @@ export class AppInfo extends Info {
     }
   }
 
-  // return auth token for session
-  getToken(): string {
+  // Start watching for change in skLoginInfo cookie
+  watchSKLogin() {
+    if (this.watchingSKLogin) return;
+    this.watchingSKLogin = window.setInterval(
+      (() => {
+        let lastCookie = this.getCookie(document.cookie, 'skLoginInfo');
+        return () => {
+          const currentCookie = this.getCookie(document.cookie, 'skLoginInfo');
+          if (currentCookie !== lastCookie) {
+            lastCookie = currentCookie;
+            this.skLoginSource.next(currentCookie);
+          }
+        };
+      })(),
+      2000
+    );
+  }
+
+  // return FB auth token for session
+  getFBToken(): string {
+    return this.getCookie(document.cookie, 'sktoken');
+  }
+
+  // return the requested cookie
+  private getCookie(c: string, sel: 'sktoken' | 'skLoginInfo') {
+    if (!c) {
+      return undefined;
+    }
     const tk = new Map();
-    document.cookie.split(';').map((i) => {
+    c.split(';').map((i) => {
       const c = i.split('=');
       tk.set(c[0], c[1]);
     });
-    if (tk.has('sktoken')) {
-      return tk.get('sktoken');
+    if (tk.has(sel)) {
+      return tk.get(sel);
     } else {
-      return null;
+      return undefined;
     }
   }
 
@@ -660,9 +693,16 @@ export class AppInfo extends Info {
           ? `${value.toFixed(1)} m`
           : `${Convert.metersToFeet(value).toFixed(1)} ft`;
       } else {
-        return this.config.units.distance !== 'ft'
-          ? `${(value / 1000).toFixed(1)} km`
-          : `${Convert.kmToNauticalMiles(value / 1000).toFixed(1)} NM`;
+        if (this.config.units.distance !== 'ft') {
+          return value < 1000
+            ? `${value.toFixed(0)} m`
+            : `${(value / 1000).toFixed(1)} km`;
+        } else {
+          const nm = Convert.kmToNauticalMiles(value / 1000);
+          return nm < 0.5
+            ? this.formatValueForDisplay(value, 'm', true)
+            : `${nm.toFixed(1)} NM`;
+        }
       }
     } else if (sourceUnits === 'm/s') {
       switch (this.config.units.speed) {
