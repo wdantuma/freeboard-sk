@@ -898,111 +898,111 @@
                 </mat-card>
               </div>
 
-              <div class="setting-group" id="sectNotes">
-                <div class="setting-group-title">RESOURCES: NOTES</div>
-                <mat-card class="setting-card">
-                  <mat-card-content>
-                    <div class="setting-card-row">
-                      <div class="setting-card-row-item">
-                        <mat-checkbox
-                          #shownotes
-                          [(ngModel)]="facade.settings.notes"
-                          (change)="onFormChange($event, shownotes)"
-                          label="after"
-                        >
-                          Display Notes on Map
-                        </mat-checkbox>
-                      </div>
-                      <div class="setting-card-row-item">
-                        <mat-form-field style="width: 100%">
-                          <mat-label>Notes Zoom Level</mat-label>
-                          <mat-select
-                            #notesminzoom
-                            [disabled]="!facade.settings.notes"
-                            [(value)]="facade.settings.selections.notesMinZoom"
-                            (selectionChange)="onFormChange($event, notesminzoom)"
-                          >
-                            @for(i of facade.list.minZoom; track i) {
-                            <mat-option [value]="i">{{i}}</mat-option>
-                            }
-                          </mat-select>
-                        </mat-form-field>
-                      </div>
-                    </div>
-                    <div class="setting-card-row">
-                      <div class="setting-card-row-item">
-                        <mat-form-field style="width: 100%">
-                          <mat-label
-                            >{{'Fetch Notes radius: (' +
-                            facade.availableUnits.distance.get(distunits.value) +
-                            ')'}}</mat-label
-                          >
-                          <mat-select
-                            id="notesgetradius"
-                            #notesgetradius
-                            [disabled]="!facade.settings.notes"
-                            [(value)]="facade.settings.resources.notes.getRadius"
-                            (selectionChange)="onFormChange($event, notesgetradius)"
-                          >
-                            @for(i of facade.list.resourceRadius;track i) {
-                            <mat-option [value]="i">{{i}}</mat-option>
-                            }
-                          </mat-select>
-                        </mat-form-field>
-                      </div>
-                    </div>
-                    <div class="setting-card-row">
-                      <div class="setting-card-row-item">
-                        <mat-form-field style="width: 100%" floatLabel="always">
-                          <mat-label>Notes fetch filter:</mat-label>
-                          <input
-                            matInput
-                            type="text"
-                            #notesrootfilter
-                            [(ngModel)]="facade.settings.resources.notes.rootFilter"
-                            (change)="onFormChange($event, notesrootfilter)"
-                            placeholder="?radius=%note:radius%"
-                            matTooltip="Filter to apply when retrieving notes"
-                          />
-                          @if(notesrootfilter.value) {
-                          <button
-                            matSuffix
-                            mat-icon-button
-                            (click)="notesrootfilter.value=''"
-                          >
-                            <mat-icon>close</mat-icon>
-                          </button>
-                          }
-                        </mat-form-field>
-                      </div>
-                    </div>
-                    <div class="setting-card-row">
-                      <div class="setting-card-row-item">
-                        <mat-checkbox
-                          #groupeditable
-                          [(ngModel)]="facade.settings.resources.notes.groupNameEdit"
-                          (change)="onFormChange($event, groupeditable)"
-                          matTooltip="Allow group name editing."
-                          label="after"
-                        >
-                          Edit Group Names
-                        </mat-checkbox>
-                      </div>
-                      <div class="setting-card-row-item">
-                        <mat-checkbox
-                          #groupposition
-                          [(ngModel)]="facade.settings.resources.notes.groupRequiresPosition"
-                          (change)="onFormChange($event, groupposition)"
-                          matTooltip="Require position information when adding notes to a group."
-                          label="after"
-                        >
-                          Position Group Note
-                        </mat-checkbox>
-                      </div>
-                    </div>
-                  </mat-card-content>
-                </mat-card>
+        <div class="setting-group" id="sectNotes">
+          <div class="setting-group-title">RESOURCES: NOTES</div>
+          <mat-card class="setting-card">
+            <mat-card-content>
+              <div class="setting-card-row">
+                <div class="setting-card-row-item">
+                  <mat-checkbox
+                    #shownotes
+                    [(ngModel)]="facade.settings.notes"
+                    (change)="onFormChange($event, shownotes)"
+                    label="after"
+                  >
+                    Display Notes on Map
+                  </mat-checkbox>
+                </div>
+                <div class="setting-card-row-item">
+                  <mat-form-field style="width: 100%">
+                    <mat-label>Notes Zoom Level</mat-label>
+                    <mat-select
+                      #notesminzoom
+                      [disabled]="!facade.settings.notes"
+                      [(value)]="facade.settings.selections.notesMinZoom"
+                      (selectionChange)="onFormChange($event, notesminzoom)"
+                    >
+                      @for(i of facade.list.minZoom; track i) {
+                      <mat-option [value]="i">{{i}}</mat-option>
+                      }
+                    </mat-select>
+                  </mat-form-field>
+                </div>
               </div>
+              <div class="setting-card-row">
+                <div class="setting-card-row-item">
+                  <mat-form-field style="width: 100%">
+                    <mat-label
+                      >{{'Fetch Notes radius: (' +
+                      facade.availableUnits.distance.get(distunits.value) +
+                      ')'}}</mat-label
+                    >
+                    <mat-select
+                      id="notesgetradius"
+                      #notesgetradius
+                      [disabled]="!facade.settings.notes"
+                      [(value)]="facade.settings.resources.notes.getRadius"
+                      (selectionChange)="onFormChange($event, notesgetradius)"
+                    >
+                      @for(i of facade.list.noteRadius;track i) {
+                      <mat-option [value]="i">{{i}}</mat-option>
+                      }
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+              </div>
+              <div class="setting-card-row">
+                <div class="setting-card-row-item">
+                  <mat-form-field style="width: 100%" floatLabel="always">
+                    <mat-label>Notes fetch filter:</mat-label>
+                    <input
+                      matInput
+                      type="text"
+                      #notesrootfilter
+                      [(ngModel)]="facade.settings.resources.notes.rootFilter"
+                      (change)="onFormChange($event, notesrootfilter)"
+                      placeholder="?radius=%note:radius%"
+                      matTooltip="Filter to apply when retrieving notes"
+                    />
+                    @if(notesrootfilter.value) {
+                    <button
+                      matSuffix
+                      mat-icon-button
+                      (click)="notesrootfilter.value=''"
+                    >
+                      <mat-icon>close</mat-icon>
+                    </button>
+                    }
+                  </mat-form-field>
+                </div>
+              </div>
+              <div class="setting-card-row">
+                <div class="setting-card-row-item">
+                  <mat-checkbox
+                    #groupeditable
+                    [(ngModel)]="facade.settings.resources.notes.groupNameEdit"
+                    (change)="onFormChange($event, groupeditable)"
+                    matTooltip="Allow group name editing."
+                    label="after"
+                  >
+                    Edit Group Names
+                  </mat-checkbox>
+                </div>
+                <div class="setting-card-row-item">
+                  <mat-checkbox
+                    #groupposition
+                    [(ngModel)]="facade.settings.resources.notes.groupRequiresPosition"
+                    (change)="onFormChange($event, groupposition)"
+                    matTooltip="Require position information when adding notes to a group."
+                    label="after"
+                  >
+                    Position Group Note
+                  </mat-checkbox>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
 
               <div class="setting-group" id="sectVideo">
                 <div class="setting-group-title">RESOURCES: VIDEO</div>
@@ -1043,33 +1043,79 @@
                 </mat-card>
               </div>
 
-              <div class="setting-group" id="sectResLayers">
-                <div class="setting-group-title">RESOURCES: LAYERS</div>
-                <mat-card class="setting-card">
-                  <mat-card-content>
-                    <div class="setting-card-row">
-                      <div class="setting-card-row-item">
-                        <div style="font-style: italic">
-                          path: ./resources/&lt;name&gt;
-                        </div>
-                        <mat-selection-list
-                          #respath
-                          (selectionChange)="onResPathSelected($event, respath)"
-                        >
-                          @for(f of facade.list.resourcePaths; track f) {
-                          <mat-list-option
-                            [selected]="facade.settings.resources.paths.includes(f)"
-                            [value]="f"
-                          >
-                            {{f}}
-                          </mat-list-option>
-                          }
-                        </mat-selection-list>
-                      </div>
-                    </div>
-                  </mat-card-content>
-                </mat-card>
+        <div class="setting-group" id="sectResLayers">
+          <div class="setting-group-title">RESOURCES: LAYERS</div>
+          <mat-card class="setting-card">
+            <mat-card-content>
+              <div class="setting-card-row">
+                <div class="setting-card-row-item">
+                  <mat-form-field style="width: 100%">
+                    <mat-label
+                      >{{'Fetch radius: (' +
+                      facade.availableUnits.distance.get(distunits.value) +
+                      ')'}}</mat-label
+                    >
+                    <mat-select
+                      id="resfetchradius"
+                      #resfetchradius
+                      [(value)]="facade.settings.resources.fetchRadius"
+                      (selectionChange)="onFormChange($event, resfetchradius)"
+                    >
+                      @for(i of facade.list.resourceRadius;track i) {
+                      <mat-option [value]="i">{{i}}</mat-option>
+                      }
+                    </mat-select>
+                  </mat-form-field>
+                </div>
               </div>
+              <!--<div class="setting-card-row">
+                <div class="setting-card-row-item">
+                  <mat-form-field style="width: 100%" floatLabel="always">
+                    <mat-label>Fetch filter:</mat-label>
+                    <input
+                      matInput
+                      type="text"
+                      #resfetchfilter
+                      [(ngModel)]="facade.settings.resources.fetchFilter"
+                      (change)="onFormChange($event, resfetchfilter)"
+                      placeholder="?radius=%fetch:radius%"
+                      matTooltip="Filter to apply when retrieving resource sets"
+                    />
+                    @if(resfetchfilter.value) {
+                    <button
+                      matSuffix
+                      mat-icon-button
+                      (click)="resfetchfilter.value=''"
+                    >
+                      <mat-icon>close</mat-icon>
+                    </button>
+                    }
+                  </mat-form-field>
+                </div>
+              </div>-->
+              <div class="setting-card-row">
+                <div class="setting-card-row-item">
+                  <div style="font-style: italic">
+                    path: ./resources/&lt;name&gt;
+                  </div>
+                  <mat-selection-list
+                    #respath
+                    (selectionChange)="onResPathSelected($event, respath)"
+                  >
+                    @for(f of facade.list.resourcePaths; track f) {
+                    <mat-list-option
+                      [selected]="facade.settings.resources.paths.includes(f)"
+                      [value]="f"
+                    >
+                      {{f}}
+                    </mat-list-option>
+                    }
+                  </mat-selection-list>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
 
               <div class="setting-group" id="sectSKConnection">
                 <div class="setting-group-title">SIGNAL K: CONNECTION</div>

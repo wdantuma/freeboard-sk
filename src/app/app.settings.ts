@@ -1,6 +1,7 @@
 import { Position } from './types';
 import { cleanConfig as cleanRadarConfig, IRadarConfig, DefaultRadarConfig as RadarDefaultConfig } from './modules/radar/settings';
 import _ from 'lodash'
+import { Convert } from './lib/convert';
 
 // validate supplied settings against base config
 export function validateConfig(settings: IAppConfig): boolean {
@@ -213,6 +214,9 @@ export function cleanConfig(
 
   if (typeof settings.resources === 'undefined') {
     settings.resources = {
+      fetchFilter:
+        '?position=[%map:longitude%,%map:latitude%]&distance=%fetch:radius%',
+      fetchRadius: 0,
       notes: {
         rootFilter:
           '?position=[%map:longitude%,%map:latitude%]&distance=%note:radius%',
@@ -233,16 +237,13 @@ export function cleanConfig(
     if (typeof settings.resources.paths === 'undefined') {
       settings.resources.paths = [];
     }
-  }
-  // update rootFilter params
-  if (typeof settings.resources.notes.rootFilter !== 'undefined') {
-    settings.resources.notes.rootFilter =
-      settings.resources.notes.rootFilter.replace('dist=', 'distance=');
-    settings.resources.notes.rootFilter =
-      settings.resources.notes.rootFilter.replace(
-        `position=%map:latitude%,%map:longitude%`,
-        `position=[%map:longitude%,%map:latitude%]`
-      );
+    if (typeof settings.resources.fetchFilter === 'undefined') {
+      settings.resources.fetchFilter =
+        '?position=[%map:longitude%,%map:latitude%]&distance=%fetch:radius%';
+    }
+    if (typeof settings.resources.fetchRadius === 'undefined') {
+      settings.resources.fetchRadius = 0;
+    }
   }
 
   // apply url params
@@ -331,7 +332,7 @@ export const DefaultConfig: IAppConfig = {
       windVectors: true, // display vessel TWD, AWD vectors
       laylines: false,
       cogLine: 10, // self COG line time (mins)
-      aisCogLine: 10, // self COG line time (mins)
+      aisCogLine: 10, // ais COG line time (mins)
       headingLineSize: -1 // mode for display of heading line -1 = default
     },
     positionFormat: 'XY',
@@ -384,8 +385,12 @@ export const DefaultConfig: IAppConfig = {
   },
   resources: {
     // ** resource options
+    fetchFilter:
+      '?position=[%map:longitude%,%map:latitude%]&distance=%fetch:radius%',
+    fetchRadius: 0, // radius (NM/km) within which to return resources
     notes: {
-      rootFilter: '?position=%map:latitude%,%map:longitude%&dist=%note:radius%', // param string to provide record filtering
+      rootFilter:
+        '?position=[%map:longitude%,%map:latitude%]&distance=%note:radius%', // param string to provide record filtering
       getRadius: 20, // radius (NM/km) within which to return notes
       groupNameEdit: false,
       groupRequiresPosition: true
@@ -513,6 +518,8 @@ export interface IAppConfig {
   };
   resources: {
     // ** resource options
+    fetchFilter: string; // param string to provide record filtering
+    fetchRadius: number; // radius (NM/km) within which to return resources
     notes: {
       rootFilter: string; // param string to provide record filtering
       getRadius: number; // radius (NM/km) within which to return notes
@@ -527,3 +534,40 @@ export interface IAppConfig {
   };
   radar: IRadarConfig;
 }
+
+// ** process url tokens
+export const processUrlTokens = (s: string, config: IAppConfig): string => {
+  if (!s) {
+    return s;
+  }
+  const ts = s.split('%');
+  if (ts.length > 1) {
+    const uts = ts.map((i) => {
+      if (i === 'map:latitude') {
+        return config.map.center[1];
+      } else if (i === 'map:longitude') {
+        return config.map.center[0];
+      } else if (i === 'note:radius') {
+        const dist =
+          config.units.distance === 'm'
+            ? config.resources.notes.getRadius
+            : Math.floor(
+                Convert.nauticalMilesToKm(config.resources.notes.getRadius)
+              );
+        return dist * 1000;
+      } else if (i === 'fetch:radius') {
+        const dist =
+          config.units.distance === 'm'
+            ? config.resources.notes.getRadius
+            : Math.floor(
+                Convert.nauticalMilesToKm(config.resources.fetchRadius)
+              );
+        return dist * 1000;
+      } else {
+        return i;
+      }
+    });
+    s = uts.join('');
+  }
+  return s;
+};
