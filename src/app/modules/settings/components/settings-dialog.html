@@ -917,6 +917,7 @@
                   <mat-form-field style="width: 100%">
                     <mat-label>Notes Zoom Level</mat-label>
                     <mat-select
+                      id="notesminzoom"
                       #notesminzoom
                       [disabled]="!facade.settings.notes"
                       [(value)]="facade.settings.selections.notesMinZoom"
@@ -956,6 +957,7 @@
                   <mat-form-field style="width: 100%" floatLabel="always">
                     <mat-label>Notes fetch filter:</mat-label>
                     <input
+                      id="notesrootfilter"
                       matInput
                       type="text"
                       #notesrootfilter
