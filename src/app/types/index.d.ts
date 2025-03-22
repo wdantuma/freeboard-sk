@@ -4,7 +4,6 @@ import { Position, LineString, MultiLineString } from './resources/geojson';
 import {
   FBCharts,
   FBNotes,
-  FBRegions,
   FBRoute,
   FBRoutes,
   FBWaypoints
@@ -15,7 +14,6 @@ import {
   SKAtoN,
   SKAircraft,
   SKVessel,
-  SKTrack,
   SKRadar
 } from '../modules/skresources/resource-classes';
 
@@ -32,15 +30,6 @@ export interface SKApiResponse {
   requestId?: string;
   href?: string;
   token?: string;
-}
-
-export interface SKNotification {
-  method: Array<string>;
-  visual: boolean;
-  state: string;
-  message: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  data: { [key: string]: any };
 }
 
 export interface PluginInfo {
@@ -79,8 +68,6 @@ export interface FBAppData {
   waypoints: FBWaypoints;
   charts: FBCharts;
   chartBounds: boolean;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  alarms: Map<string, SKNotification>;
   notes: FBNotes;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   resourceSets: { [key: string]: any }; // additional resource sets
@@ -112,12 +99,7 @@ export interface FBAppData {
     aisTracks: Map<string, MultiLineString>; // AIS targets track (tracks plugin)
     activeId: string;
     active: SKVessel;
-    closest: {
-      id: string;
-      distance: number;
-      timeTo: number;
-      position: Position;
-    };
+    closest: string[];
     prefAvailablePaths: { [key: string]: string }; // preference paths available from source
     flagged: string[];
   };
@@ -166,7 +148,6 @@ export interface FBAppData {
   autopilot: {
     console: boolean; // display Autopilot console
     hasApi: boolean; // Server implements Autopilot API
-    isLocal: boolean; // true if FB plugin AP API is enabled
   };
   buddyList: {
     hasApi: boolean; // Server has buddy list plugin
