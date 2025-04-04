@@ -34,7 +34,6 @@ interface PreferredPathsResult {
 //** Settings **
 @Component({
   selector: 'settings-dialog',
-  standalone: true,
   imports: [
     CommonModule,
     FormsModule,
