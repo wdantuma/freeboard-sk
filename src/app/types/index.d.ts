@@ -140,7 +140,6 @@ export interface FBAppData {
   };
   racing: {
     startLine: LineString;
-    finishLine: LineString;
   };
   anchor: {
     hasApi: boolean;

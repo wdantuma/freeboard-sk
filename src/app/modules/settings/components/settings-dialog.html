@@ -21,63 +21,59 @@
   </span>
 </mat-toolbar>
 
-<mat-tab-group dynamicHeight>
-  <mat-tab label="General">
-    <ng-template matTabContent>
-      <div mat-dialog-content style="display: flex">
-        <div class="left-settings-menu">
-          <mat-nav-list>
-            @for(i of menuItems; track i) {
-            <a mat-list-item (click)="jumpTo(i.id)"> {{i.text}} </a>
-            }
-          </mat-nav-list>
-        </div>
-        <div style="flex: 1 1 auto">
-          <div class="theme-page settings right-settings-content">
-            <div class="theme-panel">
-              <div class="setting-group" id="sectDisplay">
-                <div class="setting-group-title">DISPLAY &amp; SOUND</div>
-                @if(facade.data.optAppPanel) {
-                <mat-card class="setting-card">
-                  <mat-card-content>
-                    @if(facade.list.applications.length > 1) {
-                    <div class="setting-card-row">
-                      <div class="setting-card-row-item">
-                        <mat-form-field style="width: 100%">
-                          <mat-label>Select Instruments App</mat-label>
-                          <mat-select
-                            #instruments
-                            [(value)]="facade.settings.plugins.instruments"
-                            (selectionChange)="onFormChange($event, instruments);facade.buildFavouritesList()"
-                          >
-                            @for(i of facade.list.applications; track i) {
-                            <mat-option
-                              [value]="i.url"
-                              [matTooltip]="i.description"
-                              matTooltipPosition="right"
-                            >
-                              {{i.name}}
-                            </mat-option>
-                            }
-                          </mat-select>
-                        </mat-form-field>
-                      </div>
-                      <div class="setting-card-row-item">
-                        <mat-form-field style="width: 100%" floatLabel="always">
-                          <mat-label>Parameters</mat-label>
-                          <input
-                            matInput
-                            type="text"
-                            #instparams="ngModel"
-                            [disabled]="facade.settings.plugins.instruments==null"
-                            [(ngModel)]="facade.settings.plugins.parameters"
-                            (change)="onFormChange($event, instparams)"
-                            placeholder="e.g. ?layout=mylayout"
-                            matTooltip="Enter parameters to pass to Instrument App"
-                          />
-                        </mat-form-field>
-                      </div>
-
+<div mat-dialog-content style="display: flex">
+  <div class="left-settings-menu">
+    <mat-nav-list>
+      @for(i of menuItems; track i) {
+      <a mat-list-item (click)="jumpTo(i.id)"> {{i.text}} </a>
+      }
+    </mat-nav-list>
+  </div>
+  <div style="flex: 1 1 auto">
+    <div class="theme-page settings right-settings-content">
+      <div class="theme-panel">
+        <div class="setting-group" id="sectDisplay">
+          <div class="setting-group-title">DISPLAY &amp; SOUND</div>
+          @if(facade.data.optAppPanel) {
+          <mat-card class="setting-card">
+            <mat-card-content>
+              @if(facade.list.applications.length > 1) {
+              <div class="setting-card-row">
+                <div class="setting-card-row-item">
+                  <mat-form-field style="width: 100%">
+                    <mat-label>Select Instruments App</mat-label>
+                    <mat-select
+                      #instruments
+                      [(value)]="facade.settings.plugins.instruments"
+                      (selectionChange)="onFormChange($event, instruments);facade.buildFavouritesList()"
+                    >
+                      @for(i of facade.list.applications; track i) {
+                      <mat-option
+                        [value]="i.url"
+                        [matTooltip]="i.description"
+                        matTooltipPosition="right"
+                      >
+                        {{i.name}}
+                      </mat-option>
+                      }
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+                <div class="setting-card-row-item">
+                  <mat-form-field style="width: 100%" floatLabel="always">
+                    <mat-label>Parameters</mat-label>
+                    <input
+                      matInput
+                      type="text"
+                      #instparams="ngModel"
+                      [disabled]="facade.settings.plugins.instruments==null"
+                      [(ngModel)]="facade.settings.plugins.parameters"
+                      (change)="onFormChange($event, instparams)"
+                      placeholder="e.g. ?layout=mylayout"
+                      matTooltip="Enter parameters to pass to Instrument App"
+                    />
+                  </mat-form-field>
+                </div>
                 <div class="setting-card-row-item">
                   <mat-checkbox
                     #startOnOpen
@@ -87,6 +83,16 @@
                     label="after"
                   >
                     Halt App on hide
+                  </mat-checkbox>
+                </div>
+                <div class="setting-card-row-item">
+                  <mat-checkbox
+                    #wakelock
+                    [(ngModel)]="facade.settings.selections.wakeLock"
+                    (change)="onFormChange($event, wakelock)"
+                    label="after"
+                  >
+                    Prevent Device Sleeping
                   </mat-checkbox>
                 </div>
                 <div class="setting-card-row-item">
@@ -189,12 +195,13 @@
               <div class="setting-card-row" style="padding-bottom: 10px">
                 <div class="setting-card-row-item">
                   <mat-checkbox
-                    #wakelock
-                    [(ngModel)]="facade.settings.selections.wakeLock"
-                    (change)="onFormChange($event, wakelock)"
+                    #nightmode
+                    [(ngModel)]="facade.settings.nightMode"
+                    (change)="onFormChange($event, nightmode)"
                     label="after"
+                    matTooltip="Auto-set using environment.mode value."
                   >
-                    Prevent Device Sleeping
+                    Auto-set Night Mode
                   </mat-checkbox>
                 </div>
                 <div class="setting-card-row-item">
